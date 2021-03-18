@@ -1,0 +1,13 @@
+name: Auto Comment
+on: pull_request_target
+
+jobs:
+  local-checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          jq -nc "{\"body\": \"\`./scripts/checkout.py ${{ github.event.user.login }} ${{ github.event.head.ref }}\` - type in repo root to checkout this change locally\"}" | \
+          curl -sL  -X POST -d @- \
+            -H "Content-Type: application/json" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/issues/${{ github.event.number }}/comments"
