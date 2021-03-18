@@ -5,9 +5,8 @@ jobs:
   local-checkout:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          jq -nc "{\"body\": \"\`./scripts/checkout.py ${{ github.event.user.login }} ${{ github.event.head.ref }}\` - type in repo root to checkout this change locally\"}" | \
-          curl -sL  -X POST -d @- \
-            -H "Content-Type: application/json" \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/$GITHUB_REPOSITORY/issues/${{ github.event.number }}/comments"
+      - uses: bubkoo/auto-comment@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          pullRequestOpened: >
+            `./scripts/checkout.py ${{ github.actor }} ${{ github.head_ref }}` - type in repo root to checkout this change locally
