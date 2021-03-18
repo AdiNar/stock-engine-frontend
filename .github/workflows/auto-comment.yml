@@ -9,4 +9,4 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           pullRequestOpened: >
-            `./scripts/checkout.py ${{ github.actor }} ${{ github.head_ref }}` - type in repo root to checkout this change locally
+            "`./scripts/checkout.py ${{ github.actor }} ${{ github.head_ref }}` - type in repo root to checkout this change locally"
