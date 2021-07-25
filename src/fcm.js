@@ -4,13 +4,13 @@ import { API } from './Api'
 export class FCM {
   static init () {
     const firebaseConfig = {
-      apiKey: process.env.REACT_APP_FIRESTORE_API_KEY,
-      authDomain: process.env.REACT_APP_FIRESTORE_AUTH_DOMAIN,
-      databaseURL: process.env.REACT_APP_FIRESTORE_DATABASE_URL,
-      projectId: process.env.REACT_APP_FIRESTORE_PROJECT_ID,
-      storageBucket: process.env.REACT_APP_FIRESTORE_STORAGE_BUCKET,
-      messagingSenderId: process.env.REACT_APP_FIRESTORE_MESSAGING_SENDER_ID,
-      appId: process.env.REACT_APP_FIRESTORE_APP_ID
+      apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+      authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+      databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+      projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+      storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+      appId: process.env.REACT_APP_FIREBASE_APP_ID
     }
 
     // Initialize Firebase
@@ -20,6 +20,7 @@ export class FCM {
   }
 
   static async register (cookies) {
+    FCM.init()
     const messaging = firebase.messaging()
 
     return messaging.getToken({ vapidKey: process.env.REACT_APP_FIRESTORE_TOKEN })
