@@ -13,3 +13,6 @@ flask = "*"
 flask_sqlalchemy = "*"
 flask-praetorian = "*"
 flask_cors = "*"
+
+[scripts]
+checkout = "scripts/checkout.py"
