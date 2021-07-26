@@ -1,5 +1,5 @@
-export function setToken (AccessToken, cookies) {
-  cookies.set('access_token', AccessToken, { secure: true, sameSite: 'lax' })
+export function setToken (accessToken, cookies) {
+  cookies.set('access_token', accessToken, { secure: true, sameSite: 'lax' })
 }
 
 export function getToken (cookies) {
