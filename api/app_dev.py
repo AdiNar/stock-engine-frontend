@@ -1,7 +1,7 @@
 import os
 import tempfile
 
-from models import Alert, Query, User
+from init_db import init_db
 
 
 def env_default(key, val):
@@ -20,35 +20,8 @@ from app import app, db, guard, run  # noqa
 app.debug = True
 app.config["PROPAGATE_EXCEPTIONS"] = True
 
-with app.app_context():
 
-    def add_user(user, password, roles):
-        if db.session.query(User).filter_by(username=user).count() < 1:
-            db.session.add(
-                User(username=user, password=guard.hash_password(password), roles=roles)
-            )
-
-        db.session.commit()
-
-    def add_by_name(username, name, clazz):
-        user = db.session.query(User).filter_by(username=username).first()
-        if db.session.query(clazz).filter_by(name=name).count() < 1:
-            db.session.add(clazz(user_id=user.id, name=name))
-        db.session.commit()
-
-    def add_query(username, name):
-        add_by_name(username, name, Query)
-
-    def add_alert(username, name):
-        add_by_name(username, name, Alert)
-
-    add_user("admin", "admin", roles="admin")
-    add_user("user", "user", roles="")
-    add_query("user", "Test query #1")
-    add_query("user", "Test query #2")
-
-    add_query("user", "Test alert #1")
-    add_query("user", "Test alert #2")
+init_db(app)
 
 
 if __name__ == "__main__":

@@ -1,12 +1,10 @@
+from datetime import datetime
 import json
 
-import flask_sqlalchemy
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, Text
-from sqlalchemy.orm import DeclarativeMeta, relationship
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, Text, func
+from sqlalchemy.orm import relationship
 
-db = flask_sqlalchemy.SQLAlchemy()
-
-BaseModel: DeclarativeMeta = db.Model
+from globals import BaseModel
 
 
 class ModelEncoder(json.JSONEncoder):
@@ -24,9 +22,6 @@ class User(BaseModel):
     is_active = Column(Boolean, default=True, server_default="true")
     queries = relationship(
         "Query", back_populates="user", cascade="all, delete", passive_deletes=True
-    )
-    alerts = relationship(
-        "Alert", back_populates="user", cascade="all, delete", passive_deletes=True
     )
 
     @property
@@ -56,11 +51,28 @@ class Query(BaseModel):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"))
     name = Column(Text)
+    watch = Column(Boolean, default=False)
+    query = Column(Text, nullable=False)
+    state = Column(Text, nullable=False, default="DONE")
+
+    history = relationship(
+        "QueryHistory",
+        back_populates="query",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
     user = relationship("User", back_populates="queries")
 
 
-class Alert(BaseModel):
+class QueryHistory(BaseModel):
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user.id"))
-    name = Column(Text)
-    user = relationship("User", back_populates="alerts")
+    query_id = Column(Integer, ForeignKey("query.id"))
+    result = Column(Text)
+    timestamp = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        default=datetime.now(),
+        nullable=False,
+    )
+
+    query = relationship("Query", back_populates="history")

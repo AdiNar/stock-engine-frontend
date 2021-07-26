@@ -1,16 +1,11 @@
 import os
 
-import flask
-import flask_cors
-
-from api import api_blueprint, guard
-from models import ModelEncoder, User, db
-
-cors = flask_cors.CORS()
+from api import api_blueprint
+from globals import app, cors, db, guard
+from models import ModelEncoder, User
 
 
 def init_app():
-    app = flask.Flask(__name__)
     app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"]
     app.config["JWT_ACCESS_LIFESPAN"] = {"hours": 24}
     app.config["JWT_REFRESH_LIFESPAN"] = {"days": 30}
@@ -30,7 +25,7 @@ def init_app():
     return app
 
 
-app = init_app()
+init_app()
 
 
 def run():
