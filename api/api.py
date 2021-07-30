@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 
 import flask
@@ -36,7 +37,10 @@ def refresh():
 def get_queries():
     user_id = flask_praetorian.current_user_id()
 
-    return jsonify(list=db.session.query(Query).filter_by(user_id=user_id).all())
+    queries = db.session.query(Query).filter_by(user_id=user_id).all()
+    queries = list(map(update_mock_query_state, queries))
+
+    return jsonify(list=queries)
 
 
 @api_blueprint.route("/query/<query_id>", methods=["GET"])
@@ -49,7 +53,7 @@ def get_query(query_id):
         .filter_by(id=int(query_id), user_id=user_id)
         .one_or_none()
     )
-    return jsonify(query)
+    return jsonify(update_mock_query_state(query))
 
 
 @api_blueprint.route("/query", methods=["POST"])
@@ -72,9 +76,10 @@ def add_query():
 def get_watched_queries():
     user_id = flask_praetorian.current_user_id()
 
-    return jsonify(
-        list=db.session.query(Query).filter_by(user_id=user_id, watch=True).all()
-    )
+    queries = db.session.query(Query).filter_by(user_id=user_id, watch=True).all()
+    queries = list(map(update_mock_query_state, queries))
+
+    return jsonify(list=queries)
 
 
 @api_blueprint.route("/query/watch/<query_id>", methods=["POST"])
@@ -111,3 +116,14 @@ def register_fcm():
 def cleanup():
     init_db(app)
     return "", 200
+
+
+def update_mock_query_state(query):
+    time_diff = (datetime.now() - query.timestamp).total_seconds()
+
+    if time_diff > 5:
+        query.state = "DONE"
+    elif time_diff > 2:
+        query.state = "IN_PROGRESS"
+
+    return query

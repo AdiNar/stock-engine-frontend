@@ -1,7 +1,8 @@
 from datetime import datetime
 import json
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, Text, func
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, Text,
+                        func)
 from sqlalchemy.orm import relationship
 
 from globals import BaseModel
@@ -53,7 +54,13 @@ class Query(BaseModel):
     name = Column(Text)
     watch = Column(Boolean, default=False)
     query = Column(Text, nullable=False)
-    state = Column(Text, nullable=False, default="DONE")
+    state = Column(Text, nullable=False, default="QUEUED")
+    timestamp = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        default=datetime.now(),
+        nullable=False,
+    )
 
     history = relationship(
         "QueryHistory",
