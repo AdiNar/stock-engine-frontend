@@ -99,7 +99,8 @@ class QueryListElement extends React.Component {
   constructor (props) {
     super(props)
 
-    this.state = {}
+    this.state = { showDetails: false }
+    this.detailsRef = React.createRef()
   }
 
     finishState = new Set(['DONE', 'FAILED'])
@@ -119,7 +120,7 @@ class QueryListElement extends React.Component {
     }
 
     showDetails = () => {
-
+      this.setState(state => { return { showDetails: !state.showDetails } })
     }
 
     refreshQueryState = () => {
@@ -164,11 +165,13 @@ class QueryListElement extends React.Component {
 
     render () {
       const el = this.props.element
+      const details = this.state.showDetails ? 'Details' : ''
 
       return (
         <div>
           <span>{el.name}</span><span>{el.query}</span>
           <span>{el.state}</span>
+          <span>{details}</span>
           <div className='query-icons-box'>
             <BellIcon handleClick={this.toggleWatch} />
             <SyncIcon handleClick={this.rerun} />
