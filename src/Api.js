@@ -31,6 +31,10 @@ export class API {
     return this.getList(cookies, 'query/watch')
   }
 
+  static async getQuery (cookies, queryId) {
+    return getJson(this.get(cookies, 'query/' + queryId))
+  }
+
   static async call (cookies, url, body, method) {
     const values = {
       method: method,

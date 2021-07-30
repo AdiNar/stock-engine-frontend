@@ -21,14 +21,33 @@ export class PageHeader extends React.Component {
 }
 
 export class QueryInput extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.state = { query: '' }
+  }
+
+  handleChange = (event) => {
+    this.setState({ query: event.target.value })
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault()
+    API.sendQuery(this.props.cookies, this.state.query)
+      .then(this.props.callback)
+  }
+
   render () {
     return (
       <form className='query-form'>
         <div className='query-input'>
           <span className='fa fa-question' />
-          <input id='input-query' type='text' name='query' placeholder='Text of the query' required />
+          <input
+            id='input-query' type='text' name='query' onChange={this.handleChange}
+            placeholder='Text of the query' required
+          />
         </div>
-        <button id='btn-query' type='submit'>SEND</button>
+        <button id='btn-query' onClick={this.handleSubmit}>SEND</button>
       </form>
     )
   }
@@ -61,59 +80,110 @@ export class QueryListName extends React.Component {
 export class QueryList extends React.Component {
   render () {
     return (
-
       <ul>
         <div className='queryList-element'>
           {
             this.props.data.map(el =>
               <li key={el.id}>
-                {this.renderElement(el)}
-                <div className='query-icons-box'>
-                  <BellIcon />
-                  <SyncIcon />
-                  <ArrowIcon />
-                </div>
+                <QueryListElement element={el} callback={this.props.callback} cookies={this.props.cookies} />
               </li>
             )
           }
-
         </div>
       </ul>
     )
   }
-
-  renderElement (el) {
-    return null
-  }
 }
 
-class QueryHistoryList extends QueryList {
-  renderElement (el) {
-    return (
-      'Query ' + el.name
-    )
-  }
-}
-
-class Queries extends React.Component {
+class QueryListElement extends React.Component {
   constructor (props) {
     super(props)
 
-    this.state = { queryHistory: [] }
+    this.state = {}
   }
 
-  componentDidMount () {
-    const ths = this
+    finishState = new Set(['DONE', 'FAILED'])
+    waitingState = new Set(['QUEUED', 'IN_PROGRESS'])
 
-    const { cookies } = this.props
-    API.getQueryHistory(cookies)
-      .then((json) => ths.setState({ queryHistory: json.list }))
-  }
+    toggleWatch = () => {
+      const el = this.props.element
+      const watchToggled = 1 - el.watch
+      API.watchQuery(this.props.cookies, el.id, watchToggled)
+        .then(this.props.callback)
+    }
 
+    rerun = () => {
+
+    }
+
+    showDetails = () => {
+
+    }
+
+    refreshQueryState = () => {
+      // console.log(`Refreshing query ${this.props.element.name}`)
+      API.getQuery(this.props.cookies, this.props.element.id).then(json => {
+        this.props.element.state = json.state
+      })
+    }
+
+    removeRefreshInterval = () => {
+      console.log(`Removing interval for query ${this.props.element.name}`)
+      clearInterval(this.state.intervalID)
+    }
+
+    setRefreshInterval = () => {
+      console.log(`Query ${this.props.element.name} is ongoing, setting interval for results...`)
+      this.setState({ intervalID: setInterval(this.refreshQueryState, 500) })
+    }
+
+    componentDidMount () {
+      const el = this.props.element
+      if (this.waitingState.has(el.state)) {
+        console.log(`Query ${el.name} state is ${el.state}`)
+        this.setRefreshInterval()
+      }
+    }
+
+    componentDidUpdate (prevProps, prevState, snapshot) {
+      const el = this.props.element
+      const currentQueryState = el.state
+      const previousQueryState = prevProps.element.state
+
+      if (currentQueryState !== previousQueryState) {
+        console.log(`Query ${el.name} state has changed from ${previousQueryState} to ${currentQueryState}`)
+        if (this.finishState.has(currentQueryState)) { this.removeRefreshInterval() } else if (this.finishState.has(previousQueryState) && this.waitingState.has(currentQueryState)) {
+          this.setRefreshInterval()
+        }
+      }
+    }
+
+    componentWillUnmount () {
+      this.removeRefreshInterval()
+    }
+
+    render () {
+      const el = this.props.element
+
+      return (
+        <div>
+          <span>{el.name}</span><span>{el.query}</span>
+          <span>{el.state}</span>
+          <div className='query-icons-box'>
+            <BellIcon handleClick={this.toggleWatch} />
+            <SyncIcon callback={this.rerun} />
+            <ArrowIcon callback={this.showDetails} />
+          </div>
+        </div>
+      )
+    }
+}
+
+class Queries extends React.Component {
   render () {
     return (
       <div id='queries'>
-        <QueryHistoryList data={this.state.queryHistory} />
+        <QueryList data={this.props.data} callback={this.props.callback} cookies={this.props.cookies} />
       </div>
     )
   }
