@@ -68,4 +68,8 @@ export class API {
   static async watchQuery (cookies, queryId, watch) {
     return this.call(cookies, 'query/watch/' + queryId + '?watch=' + watch, {}, 'POST')
   }
+
+  static async rerunQuery (cookies, queryId) {
+    return this.call(cookies, 'query/rerun/' + queryId, {}, 'POST')
+  }
 }

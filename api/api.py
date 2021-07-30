@@ -96,6 +96,19 @@ def watch_query(query_id):
     return jsonify({"query_id": query_id, "watch": watch})
 
 
+@api_blueprint.route("/query/rerun/<query_id>", methods=["POST"])
+@flask_praetorian.auth_required
+def rerun_query(query_id):
+    user_id = flask_praetorian.current_user_id()
+
+    db.session.query(Query).filter_by(user_id=user_id, id=int(query_id)).update(
+        {"timestamp": datetime.now()}
+    )
+    db.session.commit()
+
+    return jsonify({"query_id": query_id})
+
+
 @api_blueprint.route("/register_fcm", methods=["POST"])
 @flask_praetorian.auth_required
 def register_fcm():

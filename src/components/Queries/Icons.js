@@ -19,7 +19,10 @@ export class BellIcon extends React.Component {
 export class SyncIcon extends React.Component {
   render () {
     return (
-      <img src={SyncSvg} className='query-icons' alt='' />
+      <img
+        src={SyncSvg} className='query-icons' alt=''
+        onClick={this.props.handleClick}
+      />
     )
   }
 }
@@ -28,20 +31,19 @@ export class ArrowIcon extends React.Component {
   constructor (props) {
     super(props)
     this.state = { isToggleOn: true }
-    this.handleRotateClick = this.handleRotateClick.bind(this)
   }
 
-  handleRotateClick () {
+  handleClick = (e) => {
     this.setState(prevState => ({
       isToggleOn: !prevState.isToggleOn
     }))
-    this.props.callback()
+    this.props.handleClick(e)
   }
 
   render () {
     return (
       <img
-        src={ArrowSvg} id='ArrowSvg' onClick={this.handleRotateClick}
+        src={ArrowSvg} id='ArrowSvg' onClick={this.handleClick}
         className={this.state.isToggleOn ? 'query-icons' : 'arrow-rotate'} alt=''
       />
     )

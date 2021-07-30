@@ -1,8 +1,7 @@
 from datetime import datetime
 import json
 
-from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, Text,
-                        func)
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, Text, func
 from sqlalchemy.orm import relationship
 
 from globals import BaseModel

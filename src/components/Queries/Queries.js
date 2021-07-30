@@ -113,7 +113,9 @@ class QueryListElement extends React.Component {
     }
 
     rerun = () => {
-
+      const el = this.props.element
+      API.rerunQuery(this.props.cookies, el.id)
+        .then(this.props.callback)
     }
 
     showDetails = () => {
@@ -169,8 +171,8 @@ class QueryListElement extends React.Component {
           <span>{el.state}</span>
           <div className='query-icons-box'>
             <BellIcon handleClick={this.toggleWatch} />
-            <SyncIcon callback={this.rerun} />
-            <ArrowIcon callback={this.showDetails} />
+            <SyncIcon handleClick={this.rerun} />
+            <ArrowIcon handleClick={this.showDetails} />
           </div>
         </div>
       )
