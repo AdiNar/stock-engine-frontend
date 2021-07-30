@@ -58,7 +58,7 @@ class Query(BaseModel):
     timestamp = Column(
         DateTime(timezone=True),
         server_default=func.now(),
-        default=datetime.now(),
+        default=datetime.now,
         nullable=False,
     )
 

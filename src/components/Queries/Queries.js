@@ -122,9 +122,7 @@ class QueryListElement extends React.Component {
 
     refreshQueryState = () => {
       // console.log(`Refreshing query ${this.props.element.name}`)
-      API.getQuery(this.props.cookies, this.props.element.id).then(json => {
-        this.props.element.state = json.state
-      })
+      API.getQuery(this.props.cookies, this.props.element.id).then(this.props.callback)
     }
 
     removeRefreshInterval = () => {

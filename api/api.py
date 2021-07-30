@@ -62,9 +62,9 @@ def add_query():
     user_id = flask_praetorian.current_user_id()
 
     req = flask.request.get_json(force=True)
-    query = req.get("query", None)
+    query_str = req.get("query", None)
 
-    query = Query(user_id=user_id, query=query)
+    query = Query(user_id=user_id, query=query_str)
     db.session.add(query)
     db.session.commit()
 
@@ -121,9 +121,9 @@ def cleanup():
 def update_mock_query_state(query):
     time_diff = (datetime.now() - query.timestamp).total_seconds()
 
-    if time_diff > 5:
+    if time_diff > 10:
         query.state = "DONE"
-    elif time_diff > 2:
+    elif time_diff > 5:
         query.state = "IN_PROGRESS"
 
     return query
