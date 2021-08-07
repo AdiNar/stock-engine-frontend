@@ -1,7 +1,7 @@
 import { unmountComponentAtNode } from 'react-dom'
 import { getToken } from './utils'
 import { API } from './Api'
-import { Autocomplete } from './components/Queries/Autocomplete'
+import { Autocomplete, QueryRegex } from './components/Queries/Autocomplete'
 
 const assert = require('assert')
 const BASE_ALERT_COUNT = 2
@@ -102,9 +102,21 @@ it('Should properly concatenate query with autocomplete', () => {
   }
 
   testRegex('select add(', 'close', 'select add(close')
+  testRegex('SELEct add(', 'close', 'SELEct add(close')
   testRegex('select ', 'add(', 'select add(')
+  testRegex('SELect ', 'add(', 'SELect add(')
   testRegex('select close from ', 'stock', 'select close from stock')
   testRegex('select add(close ', 'open', 'select add(close, open')
   testRegex('select add(close, open)', 'close', 'select add(close, open), close')
   testRegex('select add(close,open)', 'close', 'select add(close,open), close')
+})
+
+it('Should properly extract query', () => {
+  const testRegex = (query, groups) => {
+    const result = query.match(QueryRegex.QUERY_REGEX)
+    assert.deepStrictEqual(result, groups)
+  }
+
+  testRegex('select close from ccc on whatever', ['close', 'ccc', 'whatever'])
+  testRegex('select close from ccc', ['close', 'ccc'])
 })
