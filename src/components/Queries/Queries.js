@@ -4,6 +4,8 @@ import { API } from '../../Api'
 import './Queries.css'
 import { BellIcon, ArrowIcon, SyncIcon } from './Icons.js'
 import { PageNav } from './QueriesNav.js'
+import strings from '../../res/strings'
+import { Autocomplete } from './Autocomplete'
 
 export class PageHeader extends React.Component {
   render () {
@@ -44,10 +46,11 @@ export class QueryInput extends React.Component {
           <span className='fa fa-question' />
           <input
             id='input-query' type='text' name='query' onChange={this.handleChange}
-            placeholder='Text of the query' required
+            placeholder={strings.queries.input_placeholder} required
           />
         </div>
-        <button id='btn-query' onClick={this.handleSubmit}>SEND</button>
+        <button id='btn-query' onClick={this.handleSubmit}>{strings.queries.send}</button>
+        <Autocomplete companies={API.getCompaniesAutocomplete()} keywords={API.getKeywordsAutocomplete()} />
       </form>
     )
   }
@@ -57,7 +60,7 @@ export class QueryListHeader extends React.Component {
   render () {
     return (
       <h3 className='queryList-header'>
-        History:
+        {strings.queries.history}
       </h3>
     )
   }
@@ -67,10 +70,10 @@ export class QueryListName extends React.Component {
     return (
       <div className='queryList-names-box'>
         <h3 className='queryList-names'>
-          Queries
+          {strings.queries.queries}
         </h3>
         <h3 className='queryList-names'>
-          Alerts
+          {strings.queries.alerts}
         </h3>
       </div>
     )
@@ -187,6 +190,7 @@ class Queries extends React.Component {
     return (
       <div id='queries'>
         <QueryList data={this.props.data} callback={this.props.callback} cookies={this.props.cookies} />
+        <QueryInput callback={this.refresh} cookies={this.props.cookies} />
       </div>
     )
   }

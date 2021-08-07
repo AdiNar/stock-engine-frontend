@@ -1,6 +1,7 @@
 import { unmountComponentAtNode } from 'react-dom'
 import { getToken } from './utils'
 import { API } from './Api'
+import { Autocomplete } from './components/Queries/Autocomplete'
 
 const assert = require('assert')
 const BASE_ALERT_COUNT = 2
@@ -74,4 +75,36 @@ it('Should make alert', () => {
         }
       )
     })
+})
+
+it('Should properly parse autocomplete input', () => {
+  const testRegex = (query, expectedPreviousWord, expectedDivider, expectedCurrentWord) => {
+    const [, previousWord, divider, currentWord] = query.match(Autocomplete.INPUT_REGEX)
+    assert.strictEqual(previousWord, expectedPreviousWord, 'previous')
+    assert.strictEqual(divider, expectedDivider, 'divider')
+    assert.strictEqual(currentWord, expectedCurrentWord, 'current')
+  }
+
+  testRegex('select close', 'select', ' ', 'close')
+  testRegex('select close as', 'close', ' ', 'as')
+  testRegex('select close as sth from', 'sth', ' ', 'from')
+  testRegex('select close as sth from sth', 'from', ' ', 'sth')
+  testRegex('select add(', 'add', '(', '')
+  testRegex('select add(close,', 'close', ',', '')
+  testRegex('select add(close,op', 'close', ',', 'op')
+  testRegex('select add(close,open)', 'open', ')', '')
+})
+
+it('Should properly concatenate query with autocomplete', () => {
+  const testRegex = (query, label, expected) => {
+    const result = Autocomplete.concatenateQueryWithAutocomplete(query, label)
+    assert.strictEqual(result, expected)
+  }
+
+  testRegex('select add(', 'close', 'select add(close')
+  testRegex('select ', 'add(', 'select add(')
+  testRegex('select close from ', 'stock', 'select close from stock')
+  testRegex('select add(close ', 'open', 'select add(close, open')
+  testRegex('select add(close, open)', 'close', 'select add(close, open), close')
+  testRegex('select add(close,open)', 'close', 'select add(close,open), close')
 })

@@ -1,13 +1,14 @@
 import React from 'react'
-import { FCM } from '../../fcm'
+import { FirebaseManager } from '../../firebaseManager'
 import { withCookies } from 'react-cookie'
+import strings from '../../res/strings'
 
 class NotificationAllow extends React.Component {
   constructor (props) {
     super(props)
 
     const { cookies } = this.props
-    FCM.register(cookies)
+    FirebaseManager.registerMessaging(cookies)
     this.wrapper = React.createRef()
   }
 
@@ -21,7 +22,7 @@ class NotificationAllow extends React.Component {
 
   listener (_) {
     const { cookies } = this.props
-    return FCM.register(cookies)
+    return FirebaseManager.registerMessaging(cookies)
   }
 
   render () {
@@ -29,7 +30,10 @@ class NotificationAllow extends React.Component {
       return null
     } else {
       return (
-        <button type='button' ref={this.wrapper}>Enable notifications</button>
+        <div>
+          <span>{strings.notifications.allow_description}</span>
+          <button type='button' ref={this.wrapper}>{strings.notifications.allow_button}</button>
+        </div>
       )
     }
   }

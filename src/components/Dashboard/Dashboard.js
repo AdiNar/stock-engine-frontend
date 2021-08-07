@@ -1,5 +1,5 @@
 import React from 'react'
-import Queries, { PageHeader, QueryInput, QueryListHeader, QueryListName } from '../Queries/Queries'
+import Queries, { PageHeader, QueryListHeader, QueryListName } from '../Queries/Queries'
 import NotificationAllow from '../Queries/NotificationAllow'
 import { withCookies } from 'react-cookie'
 import { API } from '../../Api'
@@ -41,7 +41,6 @@ class Dashboard extends React.Component {
     return (
       <div className='main-page'>
         <PageHeader />
-        <QueryInput callback={this.refreshQueries} cookies={this.props.cookies} />
         <QueryListHeader />
         <QueryListName />
         <div className='main-page-components'>
