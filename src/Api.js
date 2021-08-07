@@ -76,9 +76,10 @@ export class API {
 
   static async cached (promise, field) {
     const currentValueRaw = localStorage.getItem(field) // eslint-disable-line
+    let currentValue
 
     if (currentValueRaw) {
-      const currentValue = JSON.parse(currentValueRaw)
+      currentValue = JSON.parse(currentValueRaw)
       if (currentValue.expireAt >= Date.now()) { return Promise.resolve(currentValue.data) }
     }
 
@@ -87,6 +88,10 @@ export class API {
       localStorage.setItem(field, JSON.stringify(  // eslint-disable-line
         { expireAt: tomorrowDate, data: output }))
       return Promise.resolve(output)
+    }).catch(err => {
+      console.error(err)
+      if (currentValue) return Promise.resolve(currentValue.data)
+      return Promise.reject(err)
     })
   }
 
