@@ -1,4 +1,5 @@
 import React from 'react'
+import strings from '../../res/strings'
 
 export class PageNav extends React.Component {
   render () {
@@ -22,11 +23,12 @@ export class PageNav extends React.Component {
         alerts.style.display = 'initial'
       })
     })
+
     return (
       <div>
         <nav className='page--nav'>
-          <p id='firstAnchor'>Queries</p>
-          <p id='SecondAnchor'>Alerts</p>
+          <p id='firstAnchor'>{strings.queries.queries}</p>
+          <p id='SecondAnchor'>{strings.queries.alerts}</p>
         </nav>
       </div>
     )
