@@ -24,24 +24,14 @@
   align-items: center;
 }
 
+.aa-InputWrapperPrefix {
+  width: 0;
+  margin-left: 10px;
+}
+
 .query-input {
-  border: 0.5px solid var(--gray);
-  background-color: white;
-  border-radius: 5px;
-  margin: 20px 10px 20px auto;
-  width: 250px;
-}
-
-.query-input span {
-  font-size: 15px;
-  margin: 0 10px 0 15px;
-  color: var(--gray);
-}
-
-#input-query {
-  padding: 10px;
-  border: none;
-  outline: 0;
+  margin: 0;
+  padding: 0;
 }
 
 #btn-query {
@@ -72,16 +62,7 @@
   display: none;
 }
 
-.queryList-element li {
-  padding: 15px;
-  margin: 20px auto;
-  width: 85%;
-  border: 2px solid var(--green);
-  border-radius: 10px;
-  font-family: var(--roboto);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.queryList li {
 }
 
 .query-icons-box {
@@ -109,13 +90,6 @@
     border-radius: 20px;
   }
 
-  .main-page-components {
-    width: 85%;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-  }
-
   .page--nav,
   .page--nav p {
     display: none;
@@ -125,7 +99,7 @@
     display: none;
   }
 
-  .queryList-element {
+  .queryList {
     width: 600px;
   }
 

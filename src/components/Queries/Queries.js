@@ -1,11 +1,11 @@
 import React from 'react'
 import { withCookies } from 'react-cookie'
 import { API } from '../../Api'
-import './Queries.css'
 import { BellIcon, ArrowIcon, SyncIcon } from './Icons.js'
 import { PageNav } from './QueriesNav.js'
 import strings from '../../res/strings'
-import { Autocomplete } from './Autocomplete'
+import { Autocomplete, QueryRegex } from './Autocomplete'
+import './Queries.css'
 
 export class PageHeader extends React.Component {
   render () {
@@ -41,9 +41,8 @@ export class QueryInput extends React.Component {
 
   render () {
     return (
-      <form className='query-form'>
+      <form className=''>
         <Autocomplete companies={API.getCompaniesAutocomplete()} keywords={API.getKeywordsAutocomplete()} />
-        <button id='btn-query' onClick={this.handleSubmit}>{strings.queries.send}</button>
       </form>
     )
   }
@@ -58,35 +57,31 @@ export class QueryListHeader extends React.Component {
     )
   }
 }
-export class QueryListName extends React.Component {
-  render () {
-    return (
-      <div className='queryList-names-box'>
-        <h3 className='queryList-names'>
-          {strings.queries.queries}
-        </h3>
-        <h3 className='queryList-names'>
-          {strings.queries.alerts}
-        </h3>
-      </div>
-    )
-  }
-}
 
 export class QueryList extends React.Component {
   render () {
     return (
-      <ul>
-        <div className='queryList-element'>
-          {
-            this.props.data.map(el =>
-              <li key={el.id}>
-                <QueryListElement element={el} callback={this.props.callback} cookies={this.props.cookies} />
-              </li>
-            )
-          }
+      <div className=''>
+        <div className='d-flex justify-content-center'>
+          <h3 className='queryList-names'>
+            {this.props.name}
+          </h3>
         </div>
-      </ul>
+        <ul className='d-flex justify-content-start'>
+          <div className='queryList list-group'>
+            {
+              this.props.data.map(el =>
+                <li className='list-group-item d-flex' key={el.id}>
+                  <QueryListElement element={el} callback={this.props.callback} cookies={this.props.cookies} />
+                </li>
+              )
+            }
+            <li className='query-input list-group-item'>
+              <QueryInput callback={this.refresh} cookies={this.props.cookies} />
+            </li>
+          </div>
+        </ul>
+      </div>
     )
   }
 }
@@ -165,7 +160,7 @@ class QueryListElement extends React.Component {
 
       return (
         <div>
-          <span>{el.name}</span><span>{el.query}</span>
+          <span>{el.name}</span>{QueryRegex.colorQuery(el.query)}
           <span>{el.state}</span>
           <span>{details}</span>
           <div className='query-icons-box'>
@@ -181,9 +176,11 @@ class QueryListElement extends React.Component {
 class Queries extends React.Component {
   render () {
     return (
-      <div id='queries'>
-        <QueryList data={this.props.data} callback={this.props.callback} cookies={this.props.cookies} />
-        <QueryInput callback={this.refresh} cookies={this.props.cookies} />
+      <div id='queries' className='d-flex justify-content-center'>
+        <QueryList
+          name={this.props.name} data={this.props.data}
+          callback={this.props.callback} cookies={this.props.cookies}
+        />
       </div>
     )
   }

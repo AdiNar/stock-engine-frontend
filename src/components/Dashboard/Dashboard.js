@@ -1,8 +1,9 @@
 import React from 'react'
-import Queries, { PageHeader, QueryListHeader, QueryListName } from '../Queries/Queries'
+import Queries, { PageHeader, QueryListHeader } from '../Queries/Queries'
 import NotificationAllow from '../Queries/NotificationAllow'
 import { withCookies } from 'react-cookie'
 import { API } from '../../Api'
+import strings from '../../res/strings'
 
 class Dashboard extends React.Component {
   constructor (props) {
@@ -42,10 +43,9 @@ class Dashboard extends React.Component {
       <div className='main-page'>
         <PageHeader />
         <QueryListHeader />
-        <QueryListName />
-        <div className='main-page-components'>
-          <Queries data={this.state.queries} callback={this.refresh} />
-          <Queries data={this.state.alerts} callback={this.refresh} />
+        <div className='d-flex gap-2 justify-content-center'>
+          <Queries name={strings.queries.queries} data={this.state.queries} callback={this.refresh} />
+          <Queries name={strings.queries.alerts} data={this.state.alerts} callback={this.refresh} />
           <NotificationAllow />
         </div>
       </div>
