@@ -35,8 +35,8 @@ def init_db(app):
 
         add_user("admin", "admin", roles="admin")
         add_user("user", "user", roles="")
-        add_query("user", "Test query #1", "stock(close) as test1")
-        add_query("user", "Test query #2", "stock(close) as test2")
+        add_query("user", "Test query #1", "select close from stock on sth as test1")
+        add_query("user", "Test query #2", "select close from stock as test2")
 
-        add_alert("user", "Test alert #1", "stock(close) as test3")
-        add_alert("user", "Test alert #2", "stock(close) as test4")
+        add_alert("user", "Test alert #1", "select close from stock on sth as test3")
+        add_alert("user", "Test alert #2", "select close from stock as test4")
