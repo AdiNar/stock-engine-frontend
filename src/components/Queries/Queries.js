@@ -42,15 +42,8 @@ export class QueryInput extends React.Component {
   render () {
     return (
       <form className='query-form'>
-        <div className='query-input'>
-          <span className='fa fa-question' />
-          <input
-            id='input-query' type='text' name='query' onChange={this.handleChange}
-            placeholder={strings.queries.input_placeholder} required
-          />
-        </div>
-        <button id='btn-query' onClick={this.handleSubmit}>{strings.queries.send}</button>
         <Autocomplete companies={API.getCompaniesAutocomplete()} keywords={API.getKeywordsAutocomplete()} />
+        <button id='btn-query' onClick={this.handleSubmit}>{strings.queries.send}</button>
       </form>
     )
   }
