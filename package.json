@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@algolia/autocomplete-js": "^1.2.2",
+    "@algolia/autocomplete-plugin-recent-searches": "^1.2.2",
+    "@algolia/autocomplete-theme-classic": "^1.2.2",
     "@babel/eslint-parser": "^7.14.7",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
     "@babel/plugin-proposal-private-property-in-object": "^7.14.5",
@@ -10,6 +13,7 @@
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.8.3",
     "firebase": "^8.7.0",
+    "htm": "^3.1.0",
     "react": "^17.0.1",
     "react-cookie": "^4.0.3",
     "react-dom": "^17.0.1",
