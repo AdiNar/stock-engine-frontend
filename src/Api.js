@@ -82,7 +82,7 @@ export class API {
       if (currentValue.expireAt >= Date.now()) { return Promise.resolve(currentValue.data) }
     }
 
-    return promise.then(output => {
+    return promise().then(output => {
       const tomorrowDate = Date.now() + 24 * 60 * 1000
       localStorage.setItem(field, JSON.stringify(  // eslint-disable-line
         { expireAt: tomorrowDate, data: output }))
@@ -91,7 +91,7 @@ export class API {
   }
 
   static async getFirebaseList (collection, mapper) {
-    return this.cached(FirebaseManager.firestore().collection(collection).get()
+    return this.cached(() => FirebaseManager.firestore().collection(collection).get()
       .then((querySnapshot) => {
         const res = []
         querySnapshot.forEach((doc) => {
