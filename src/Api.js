@@ -1,4 +1,5 @@
 import { getDefaultHeaders, setToken } from './utils'
+import { FirebaseManager } from './firebaseManager'
 
 function getJson (promise) {
   return promise.then((res) => {
@@ -71,5 +72,48 @@ export class API {
 
   static async rerunQuery (cookies, queryId) {
     return this.call(cookies, 'query/rerun/' + queryId, {}, 'POST')
+  }
+
+  static async cached (promise, field) {
+    const currentValueRaw = localStorage.getItem(field) // eslint-disable-line
+
+    if (currentValueRaw) {
+      const currentValue = JSON.parse(currentValueRaw)
+      if (currentValue.expireAt >= Date.now()) { return Promise.resolve(currentValue.data) }
+    }
+
+    return promise.then(output => {
+      const tomorrowDate = Date.now() + 24 * 60 * 1000
+      localStorage.setItem(field, JSON.stringify(  // eslint-disable-line
+        { expireAt: tomorrowDate, data: output }))
+      return Promise.resolve(output)
+    })
+  }
+
+  static async getFirebaseList (collection, mapper) {
+    return this.cached(FirebaseManager.firestore().collection(collection).get()
+      .then((querySnapshot) => {
+        const res = []
+        querySnapshot.forEach((doc) => {
+          res.push(mapper(doc))
+        })
+        return Promise.resolve(res)
+      }), 'firestore_' + collection)
+  }
+
+  static async getCompaniesAutocomplete () {
+    return this.getFirebaseList('companies', obj => {
+      const indexes = obj.data().indexes
+      const indexesFormatted = indexes ? '; ' + Object.keys(indexes).join(', ') : ''
+      const branchFormatted = obj.data().branch || ''
+      const description = branchFormatted + indexesFormatted
+      return { label: obj.id, description: description }
+    })
+  }
+
+  static async getKeywordsAutocomplete () {
+    return this.getFirebaseList('keywords', obj => {
+      return { label: obj.id, description: obj.data().def }
+    })
   }
 }

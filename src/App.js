@@ -2,12 +2,12 @@ import './App.css'
 import { isAuthenticated } from './utils'
 import React from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
-import { FCM } from './fcm'
+import { FirebaseManager } from './firebaseManager'
 import Login from './components/LoginPage/Login'
 import Dashboard from './components/Dashboard/Dashboard'
 import { withCookies } from 'react-cookie'
 
-FCM.init()
+FirebaseManager.init()
 
 class App extends React.Component {
   render () {

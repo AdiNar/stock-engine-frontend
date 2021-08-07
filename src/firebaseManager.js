@@ -1,7 +1,7 @@
 import firebase from 'firebase'
 import { API } from './Api'
 
-export class FCM {
+export class FirebaseManager {
   static init () {
     const firebaseConfig = {
       apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -19,8 +19,8 @@ export class FCM {
     }
   }
 
-  static async register (cookies) {
-    FCM.init()
+  static async registerMessaging (cookies) {
+    FirebaseManager.init()
     const messaging = firebase.messaging()
 
     return messaging.getToken({ vapidKey: process.env.REACT_APP_FIRESTORE_TOKEN })
@@ -35,5 +35,9 @@ export class FCM {
       }).catch((err) => {
         console.log('An error occurred while retrieving token. ', err)
       })
+  }
+
+  static firestore () {
+    return firebase.firestore()
   }
 }
