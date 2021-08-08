@@ -70,11 +70,11 @@
 }
 
 .query-icons {
-  width: 20px;
   color: var(--gray);
-  margin: 8px;
+  margin: 0 auto;
   transition: 0.5s all;
   cursor: pointer;
+  display: block;
 }
 
 #alerts {
@@ -100,7 +100,6 @@
   }
 
   .queryList {
-    width: 600px;
   }
 
   #alerts {
@@ -118,4 +117,29 @@
     width: 55%;
     margin: 10px auto;
   }
+}
+
+.btn-secondary, .btn-secondary.disabled {
+  background-color: #fff;
+  border-color: #ddd;
+  height: 32px;
+  width: 48px;
+}
+
+.btn-secondary:hover {
+  background-color: #eeeeee;
+  border-color: #ddd;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.no-border {
+  border-color: transparent;
+}
+
+.list-group-item.queryList-element {
+  padding-right: 0;
+  margin-right: 0;
 }

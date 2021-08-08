@@ -1,11 +1,13 @@
 import React from 'react'
 import { withCookies } from 'react-cookie'
 import { API } from '../../Api'
-import { BellIcon, ArrowIcon, SyncIcon } from './Icons.js'
+import { BellIcon, ArrowIcon, SyncIcon, CssIcon } from './Icons.js'
 import { PageNav } from './QueriesNav.js'
 import strings from '../../res/strings'
 import { Autocomplete, QueryRegex } from './Autocomplete'
 import './Queries.css'
+import CheckLgSvg from '../../images/icons/check-lg.svg'
+import ExclamationCircleSvg from '../../images/icons/exclamation-circle.svg'
 
 export class PageHeader extends React.Component {
   render () {
@@ -68,15 +70,15 @@ export class QueryList extends React.Component {
           </h3>
         </div>
         <ul className='d-flex justify-content-start'>
-          <div className='queryList list-group'>
+          <div className='queryList list-group w-100'>
             {
               this.props.data.map(el =>
-                <li className='list-group-item d-flex' key={el.id}>
+                <li className='list-group-item queryList-element' key={el.id}>
                   <QueryListElement element={el} callback={this.props.callback} cookies={this.props.cookies} />
                 </li>
               )
             }
-            <li className='query-input list-group-item'>
+            <li className='query-input list-group-item queryList-element'>
               <QueryInput callback={this.refresh} cookies={this.props.cookies} />
             </li>
           </div>
@@ -86,16 +88,30 @@ export class QueryList extends React.Component {
   }
 }
 
+const QueryState = {
+  DONE: 'DONE',
+  FAILED: 'FAILED',
+  QUEUED: 'QUEUED',
+  IN_PROGRESS: 'IN_PROGRESS'
+}
+
+const QueryStateIcon = {
+  DONE: <img src={CheckLgSvg} alt='' className='query-icons' />,
+  FAILED: <img src={ExclamationCircleSvg} alt='' className='query-icons' />,
+  QUEUED: <CssIcon name='state-queued-loader' />,
+  IN_PROGRESS: <CssIcon name='state-in-progress-loader' />
+}
+
 class QueryListElement extends React.Component {
   constructor (props) {
     super(props)
 
-    this.state = { showDetails: false }
+    this.state = { showDetails: false, mouseIn: false }
     this.detailsRef = React.createRef()
   }
 
-    finishState = new Set(['DONE', 'FAILED'])
-    waitingState = new Set(['QUEUED', 'IN_PROGRESS'])
+    finishState = new Set([QueryState.DONE, QueryState.FAILED])
+    waitingState = new Set([QueryState.QUEUED, QueryState.IN_PROGRESS])
 
     toggleWatch = () => {
       const el = this.props.element
@@ -115,24 +131,20 @@ class QueryListElement extends React.Component {
     }
 
     refreshQueryState = () => {
-      // console.log(`Refreshing query ${this.props.element.name}`)
       API.getQuery(this.props.cookies, this.props.element.id).then(this.props.callback)
     }
 
     removeRefreshInterval = () => {
-      console.log(`Removing interval for query ${this.props.element.name}`)
       clearInterval(this.state.intervalID)
     }
 
     setRefreshInterval = () => {
-      console.log(`Query ${this.props.element.name} is ongoing, setting interval for results...`)
       this.setState({ intervalID: setInterval(this.refreshQueryState, 500) })
     }
 
     componentDidMount () {
       const el = this.props.element
       if (this.waitingState.has(el.state)) {
-        console.log(`Query ${el.name} state is ${el.state}`)
         this.setRefreshInterval()
       }
     }
@@ -143,7 +155,6 @@ class QueryListElement extends React.Component {
       const previousQueryState = prevProps.element.state
 
       if (currentQueryState !== previousQueryState) {
-        console.log(`Query ${el.name} state has changed from ${previousQueryState} to ${currentQueryState}`)
         if (this.finishState.has(currentQueryState)) { this.removeRefreshInterval() } else if (this.finishState.has(previousQueryState) && this.waitingState.has(currentQueryState)) {
           this.setRefreshInterval()
         }
@@ -154,19 +165,57 @@ class QueryListElement extends React.Component {
       this.removeRefreshInterval()
     }
 
+    handleOnMouseEnter = () => {
+      this.setState({ mouseIn: true })
+    }
+
+    handleOnMouseLeave = () => {
+      this.setState({ mouseIn: false })
+    }
+
     render () {
       const el = this.props.element
       const details = this.state.showDetails ? 'Details' : ''
 
       return (
-        <div>
-          <span>{el.name}</span>{QueryRegex.colorQuery(el.query)}
-          <span>{el.state}</span>
-          <span>{details}</span>
-          <div className='query-icons-box'>
-            <BellIcon handleClick={this.toggleWatch} />
-            <SyncIcon handleClick={this.rerun} />
-            <ArrowIcon handleClick={this.showDetails} />
+        <div
+          onMouseEnter={this.handleOnMouseEnter}
+          onMouseLeave={this.handleOnMouseLeave}
+          className='container'
+        >
+          <div className='row justify-content-between'>
+            <div className='col-md-auto'>
+              <span>{el.name}</span>
+              {QueryRegex.colorQuery(el.query)}
+              {details}
+            </div>
+            {this.state.mouseIn
+              ? (
+                <div className='float-right col-md-auto btn-group mr-2 no-right-padding' role='group'>
+                  <div className='btn btn-secondary'>
+                    <SyncIcon handleClick={this.rerun} />
+                  </div>
+                  <div className='btn btn-secondary'>
+                    <ArrowIcon handleClick={this.showDetails} />
+                  </div>
+                  <div className='btn btn-secondary'>
+                    <BellIcon handleClick={this.toggleWatch} />
+                  </div>
+                  <div className='btn btn-secondary disabled'>
+                    {QueryStateIcon[el.state]}
+                  </div>
+                </div>
+                )
+              : (
+                <div className='float-right col-md-auto mr-2' role='group'>
+                  <div className='btn btn-secondary no-border'>
+                    <BellIcon handleClick={this.toggleWatch} />
+                  </div>
+                  <div className='btn btn-secondary no-border'>
+                    {QueryStateIcon[el.state]}
+                  </div>
+                </div>
+                )}
           </div>
         </div>
       )
@@ -176,7 +225,7 @@ class QueryListElement extends React.Component {
 class Queries extends React.Component {
   render () {
     return (
-      <div id='queries' className='d-flex justify-content-center'>
+      <div id='queries' className='col-lg-4 col-md-5 col-sm-6'>
         <QueryList
           name={this.props.name} data={this.props.data}
           callback={this.props.callback} cookies={this.props.cookies}
