@@ -1,0 +1,39 @@
+/* https://loading.io/css/ */
+
+:root {
+  --base-size: 1;
+}
+
+.state-in-progress-loader {
+  display: inline-block;
+  position: relative;
+}
+.state-in-progress-loader div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: calc(8px * var(--base-size));
+  height: calc(8px * var(--base-size));
+  margin: calc(1px * var(--base-size));
+  border: calc(1px * var(--base-size)) solid #000;
+  border-radius: 50%;
+  animation: state-in-progress-loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #000 transparent transparent transparent;
+}
+.state-in-progress-loader div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.state-in-progress-loader div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.state-in-progress-loader div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes state-in-progress-loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

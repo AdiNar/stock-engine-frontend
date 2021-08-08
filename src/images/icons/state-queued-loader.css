@@ -1,0 +1,58 @@
+/* https://loading.io/css/ */
+
+:root {
+  --base-size: 2;
+}
+
+.state-queued-loader {
+  display: inline-block;
+  position: relative;
+}
+.state-queued-loader div {
+  position: absolute;
+  width: calc(4px * var(--base-size));
+  height: calc(4px * var(--base-size));
+  border-radius: 50%;
+  background: #000;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.state-queued-loader div:nth-child(1) {
+  left: calc(2px * var(--base-size));
+  animation: state-queued-loader1 0.6s infinite;
+}
+.state-queued-loader div:nth-child(2) {
+  left: calc(2px * var(--base-size));
+  animation: state-queued-loader2 0.6s infinite;
+}
+.state-queued-loader div:nth-child(3) {
+  left: calc(8px * var(--base-size));
+  animation: state-queued-loader2 0.6s infinite;
+}
+.state-queued-loader div:nth-child(4) {
+  left: calc(14px * var(--base-size));
+  animation: state-queued-loader3 0.6s infinite;
+}
+@keyframes state-queued-loader1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes state-queued-loader3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes state-queued-loader2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(calc(6px * var(--base-size)), 0);
+  }
+}
