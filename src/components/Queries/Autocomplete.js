@@ -10,7 +10,7 @@ export class Autocomplete extends React.Component {
     static KEYWORDS_REGEX = '(select|from|as)'
 
     static concatenateQueryWithAutocomplete (query, label) {
-      const queryMatch = query.match(Autocomplete.INPUT_REGEX)
+      const queryMatch = query.toLowerCase().match(Autocomplete.INPUT_REGEX)
 
       if (queryMatch) {
         const previousWord = queryMatch[1]
@@ -18,6 +18,9 @@ export class Autocomplete extends React.Component {
         const currentWord = queryMatch[3]
 
         let queryWithoutCurrentWord = query.substring(0, query.length - currentWord.length).trim()
+
+        console.log(`queryWithout: ${queryWithoutCurrentWord}, previous: ${previousWord},
+          divider: ${divider}, current: ${currentWord}, label: ${label},`)
 
         if (divider === '' || previousWord.match(Autocomplete.KEYWORDS_REGEX)) {
           queryWithoutCurrentWord += ' '
@@ -33,6 +36,8 @@ export class Autocomplete extends React.Component {
       super(props)
 
       this.autocompleteRef = React.createRef()
+      this.previousQuery = undefined
+      this.previousItems = undefined
     }
 
     componentDidMount () {
@@ -40,16 +45,20 @@ export class Autocomplete extends React.Component {
 
       autocomplete({
         container: this.autocompleteRef.current,
+        openOnFocus: true,
         placeholder: 'Placeholder',
         getSources: function ({ query }) {
           return ths.props.companies.then(companiesList => {
             return ths.props.keywords.then(keywordsList => {
               const [, , currentWord, lst] = ths.getProperSuggestions(query, companiesList, keywordsList)
-              return [
+              return ths.previousSources = [ // eslint-disable-line
                 {
                   sourceId: 'elements',
                   getItems () {
-                    return lst.filter(({ label }) =>
+                    if (ths.previousQuery === query) return ths.previousItems
+                    ths.previousQuery = query
+
+                    return ths.previousItems = lst.filter(({ label }) => // eslint-disable-line
                       label.toLowerCase().includes(currentWord)
                     ).sort((aRaw, bRaw) => {
                       const a = aRaw.label.toLowerCase()
@@ -120,4 +129,36 @@ export class Autocomplete extends React.Component {
 
       return defaultResponse
     }
+}
+
+export class QueryRegex {
+  static QUERY_REGEX = '(select) (.+) (from) (\\S+)( on .*)?'
+
+  static colorQuery (query) {
+    const match = query.toLowerCase().match(QueryRegex.QUERY_REGEX)
+
+    if (!match) return query
+
+    const [, , fields, , stock, condition] = match
+
+    const queryList = [
+      { label: 'SELECT ', color: 'blue', id: 1 },
+      { label: fields, color: 'orange', id: 2 },
+      { label: ' FROM ', color: 'blue', id: 3 },
+      { label: stock, color: 'orange', id: 4 }
+    ]
+
+    if (condition) {
+      queryList.push({ label: ' ON ', color: 'blue', id: 5 }, { label: condition, color: 'orange', id: 6 })
+    }
+
+    return (
+      <div>
+        {
+            queryList.map(({ label, color, id }) =>
+              <span key={id} style={{ color: color }}>{label}</span>)
+        }
+      </div>
+    )
+  }
 }
