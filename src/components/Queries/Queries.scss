@@ -1,3 +1,5 @@
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+
 .page--header {
   padding: 20px;
   margin-bottom: 25px;
@@ -58,23 +60,14 @@
   font-size: 18px;
 }
 
-.queryList-names {
-  display: none;
-}
-
-.queryList li {
-}
-
 .query-icons-box {
   display: inline-flex;
 }
 
 .query-icons {
   color: var(--gray);
-  margin: 0 auto;
   transition: 0.5s all;
   cursor: pointer;
-  display: block;
 }
 
 #alerts {
@@ -99,9 +92,6 @@
     display: none;
   }
 
-  .queryList {
-  }
-
   #alerts {
     display: initial;
   }
@@ -119,27 +109,88 @@
   }
 }
 
-.btn-secondary, .btn-secondary.disabled {
-  background-color: #fff;
-  border-color: #ddd;
-  height: 32px;
-  width: 48px;
-}
+.queryList {
+  .list-group {
+    overflow: scroll;
+    height: 50vh;
+    max-height: 50vh;
+  }
 
-.btn-secondary:hover {
-  background-color: #eeeeee;
-  border-color: #ddd;
-}
+  .list-group-item {
+    margin-right: 0;
+    margin-left: 0;
+    padding: 16px 0 16px 4px;
+  }
 
-.invisible {
-  visibility: hidden;
-}
+  .query-input {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    position: relative;
 
-.no-border {
-  border-color: transparent;
-}
+    .query-send-button {
+      @extend .btn;
+      @extend .btn-primary;
 
-.list-group-item.queryList-element {
-  padding-right: 0;
-  margin-right: 0;
+      margin: 4px;
+      background-color: #3c8ed7;
+      color: white;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 12px;
+      text-align: center;
+
+      &:hover {
+        background-color: #2e7bbf;
+      }
+
+      &:active {
+        background-color: #145e9f;
+      }
+    }
+  }
+
+  li {
+    .icon-group {
+      @extend .col-md-auto;
+      @extend .btn-group;
+    }
+
+    .icon {
+      @extend .btn;
+      @extend .justify-content-center;
+      @extend .btn-secondary;
+      @extend .align-items-center;
+      @extend .d-flex;
+
+      &.no-border {
+        border-color: transparent !important;
+      }
+
+      &, &.disabled {
+        background-color: #fff;
+        border-color: #ddd;
+        height: 32px;
+        width: 48px;
+        margin: 0;
+        padding: 0;
+      }
+
+    }
+
+    .btn-secondary:hover {
+      background-color: #eeeeee;
+      border-color: #ddd;
+    }
+  }
+
+  .invisible {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  .aa-Autocomplete {
+    margin-right: 12px;
+  }
 }

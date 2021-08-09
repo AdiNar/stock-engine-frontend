@@ -5,7 +5,7 @@ import { BellIcon, ArrowIcon, SyncIcon, CssIcon } from './Icons.js'
 import { PageNav } from './QueriesNav.js'
 import strings from '../../res/strings'
 import { Autocomplete, QueryRegex } from './Autocomplete'
-import './Queries.css'
+import './Queries.scss'
 import CheckLgSvg from '../../images/icons/check-lg.svg'
 import ExclamationCircleSvg from '../../images/icons/exclamation-circle.svg'
 
@@ -29,10 +29,7 @@ export class QueryInput extends React.Component {
     super(props)
 
     this.state = { query: '' }
-  }
-
-  handleChange = (event) => {
-    this.setState({ query: event.target.value })
+    this.autocompleteRef = React.createRef()
   }
 
   handleSubmit = (e) => {
@@ -41,11 +38,23 @@ export class QueryInput extends React.Component {
       .then(this.props.callback)
   }
 
+  queryListener = (query) => {
+    this.setState({ query: query })
+  }
+
   render () {
     return (
-      <form className=''>
-        <Autocomplete companies={API.getCompaniesAutocomplete()} keywords={API.getKeywordsAutocomplete()} />
-      </form>
+      <div className='query-input'>
+        <Autocomplete
+          ref={this.autocompleteRef}
+          companies={API.getCompaniesAutocomplete()}
+          keywords={API.getKeywordsAutocomplete()}
+          queryListener={this.queryListener}
+        />
+        <a role='button' onClick={this.handleSubmit} className='query-send-button'>
+          {strings.queries.send}
+        </a>
+      </div>
     )
   }
 }
@@ -61,28 +70,42 @@ export class QueryListHeader extends React.Component {
 }
 
 export class QueryList extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.lastItem = React.createRef()
+  }
+
+  scrollToBottom = () => {
+    this.lastItem.current.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  componentDidUpdate (prevProps, prevState, snapshot) {
+    if (this.props.withInput && this.props.data.length !== prevProps.data.length) {
+      this.scrollToBottom()
+    }
+  }
+
   render () {
     return (
-      <div className=''>
+      <div className='queryList'>
         <div className='d-flex justify-content-center'>
           <h3 className='queryList-names'>
             {this.props.name}
           </h3>
         </div>
-        <ul className='d-flex justify-content-start'>
-          <div className='queryList list-group w-100'>
-            {
+        <ul className='list-group'>
+          {
               this.props.data.map(el =>
-                <li className='list-group-item queryList-element' key={el.id}>
+                <li ref={this.lastItem} className='list-group-item' key={el.id}>
                   <QueryListElement element={el} callback={this.props.callback} cookies={this.props.cookies} />
                 </li>
               )
             }
-            <li className='query-input list-group-item queryList-element'>
-              <QueryInput callback={this.refresh} cookies={this.props.cookies} />
-            </li>
-          </div>
         </ul>
+
+        {this.props.withInput &&
+          <QueryInput callback={this.props.callback} cookies={this.props.cookies} />}
       </div>
     )
   }
@@ -185,37 +208,24 @@ class QueryListElement extends React.Component {
         >
           <div className='row justify-content-between'>
             <div className='col-md-auto'>
-              <span>{el.name}</span>
+              <span style={{ color: 'gray' }}>{el.name}</span>
               {QueryRegex.colorQuery(el.query)}
               {details}
             </div>
-            {this.state.mouseIn
-              ? (
-                <div className='float-right col-md-auto btn-group mr-2 no-right-padding' role='group'>
-                  <div className='btn btn-secondary'>
-                    <SyncIcon handleClick={this.rerun} />
-                  </div>
-                  <div className='btn btn-secondary'>
-                    <ArrowIcon handleClick={this.showDetails} />
-                  </div>
-                  <div className='btn btn-secondary'>
-                    <BellIcon handleClick={this.toggleWatch} />
-                  </div>
-                  <div className='btn btn-secondary disabled'>
-                    {QueryStateIcon[el.state]}
-                  </div>
-                </div>
-                )
-              : (
-                <div className='float-right col-md-auto mr-2' role='group'>
-                  <div className='btn btn-secondary no-border'>
-                    <BellIcon handleClick={this.toggleWatch} />
-                  </div>
-                  <div className='btn btn-secondary no-border'>
-                    {QueryStateIcon[el.state]}
-                  </div>
-                </div>
-                )}
+            <div className='float-right icon-group' role='group'>
+              <div className={`icon ${this.state.mouseIn ? '' : 'invisible'}`}>
+                <ArrowIcon handleClick={this.showDetails} isToggledOn={this.state.showDetails} />
+              </div>
+              <div className={`icon ${this.state.mouseIn ? '' : 'invisible'}`}>
+                <SyncIcon handleClick={this.rerun} />
+              </div>
+              <div className={`icon ${this.state.mouseIn ? '' : 'no-border'}`}>
+                <BellIcon handleClick={this.toggleWatch} isToggledOn={el.watch} />
+              </div>
+              <div className={`icon disabled ${this.state.mouseIn ? '' : 'no-border'}`}>
+                {QueryStateIcon[el.state]}
+              </div>
+            </div>
           </div>
         </div>
       )
@@ -225,8 +235,9 @@ class QueryListElement extends React.Component {
 class Queries extends React.Component {
   render () {
     return (
-      <div id='queries' className='col-lg-4 col-md-5 col-sm-6'>
+      <div id='queries' className='col-xxl-4 col-xl-6'>
         <QueryList
+          withInput={this.props.withInput}
           name={this.props.name} data={this.props.data}
           callback={this.props.callback} cookies={this.props.cookies}
         />

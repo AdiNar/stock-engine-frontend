@@ -44,8 +44,8 @@ class Dashboard extends React.Component {
         <PageHeader />
         <QueryListHeader />
         <div className='d-flex gap-2 justify-content-center'>
-          <Queries name={strings.queries.queries} data={this.state.queries} callback={this.refresh} />
-          <Queries name={strings.queries.alerts} data={this.state.alerts} callback={this.refresh} />
+          <Queries withInput name={strings.queries.queries} data={this.state.queries} callback={this.refresh} />
+          <Queries withInput={false} name={strings.queries.alerts} data={this.state.alerts} callback={this.refresh} />
           <NotificationAllow />
         </div>
       </div>

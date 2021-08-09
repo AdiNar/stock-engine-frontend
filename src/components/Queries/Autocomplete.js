@@ -58,6 +58,7 @@ export class Autocomplete extends React.Component {
                     if (ths.previousQuery === query) return ths.previousItems
                     ths.previousQuery = query
 
+                    ths.props.queryListener(query)
                     return ths.previousItems = lst.filter(({ label }) => // eslint-disable-line
                       label.toLowerCase().includes(currentWord)
                     ).sort((aRaw, bRaw) => {
@@ -141,15 +142,18 @@ export class QueryRegex {
 
     const [, , fields, , stock, condition] = match
 
+    const orange = 'rgba(204, 95, 0, 1)'; const blue = 'rgba(0, 12, 179, 1)'
+
     const queryList = [
-      { label: 'SELECT ', color: 'blue', id: 1 },
-      { label: fields, color: 'orange', id: 2 },
-      { label: ' FROM ', color: 'blue', id: 3 },
-      { label: stock, color: 'orange', id: 4 }
+      { label: 'SELECT ', color: blue, id: 1 },
+      { label: fields, color: orange, id: 2 },
+      { label: ' FROM ', color: blue, id: 3 },
+      { label: stock, color: orange, id: 4 }
     ]
 
     if (condition) {
-      queryList.push({ label: ' ON ', color: 'blue', id: 5 }, { label: condition, color: 'orange', id: 6 })
+      queryList.push({ label: ' ON ', color: blue, id: 5 },
+        { label: condition.substring(4), color: orange, id: 6 })
     }
 
     return (
