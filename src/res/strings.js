@@ -25,7 +25,7 @@ strings.queries = {
   alerts: 'Alerts',
   history: 'History',
   input_placeholder: 'SELECT <fields> FROM <stock regex> ON <condition>',
-  example: 'SELECT close FROM <stock> ON close > 50'
+  example: 'SELECT :fields FROM :stock ON :field > :value'
 }
 
 export default strings

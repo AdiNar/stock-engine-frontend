@@ -94,7 +94,7 @@ export class QueryList extends React.Component {
             {this.props.name}
           </h3>
         </div>
-        <ul className='list-group'>
+        <ul className='list-group border list-group-flush'>
           {
               this.props.data.map(el =>
                 <li ref={this.lastItem} className='list-group-item' key={el.id}>

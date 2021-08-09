@@ -138,7 +138,7 @@
       position: absolute;
       top: 0;
       bottom: 0;
-      right: 12px;
+      right: 0;
       text-align: center;
 
       &:hover {
@@ -188,9 +188,5 @@
   .invisible {
     visibility: hidden;
     opacity: 0;
-  }
-
-  .aa-Autocomplete {
-    margin-right: 12px;
   }
 }
